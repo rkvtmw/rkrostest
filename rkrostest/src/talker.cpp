@@ -4,33 +4,34 @@
 #include <iostream>
 
 int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "talker");
+	
+	ros::NodeHandle n;
+	
+	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+	
+	ros::Rate loop_rate(10);
+	
+	int count = 0;
+	
+	while (ros::ok())
 	{
-		ros::init(argc, argv, "talker");
+		std_msgs::String msg;
 		
-		ros::NodeHandle n;
+		std::stringstream ss;
+		ss << "hello. the test is talking. Here's a number: " << count;
 		
-		ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+		msg.data = ss.str();
 		
-		ros::Rate loop_rate(10);
+		ROS_INFO("%s", msg.data.c_str());
 		
-		int count = 0;
-		while (ros::ok())
-			{
-				std_msgs::String msg;
-				
-				std::stringstream ss;
-				ss << "hello. the test is talking. Here's a number: " << count;
-				
-				msg.data = ss.str();
-				
-				ROS_INFO("%s", msg.data.c_str());
-				
-				chatter_pub.publish(msg);
-				
-				ros::spinOnce();
-				
-				loop_rate.sleep();
-				++count;
-			}
-		return 0;
+		chatter_pub.publish(msg);
+		
+		ros::spinOnce();
+		
+		loop_rate.sleep();
+		++count;
 	}
+	return 0;
+}
